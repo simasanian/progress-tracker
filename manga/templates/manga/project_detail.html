@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 10px;
+            margin: 0;
+        }
+        h1,h2,h3 {
+            font-size: 1.2em;
+        }
+        input[type="text"],
+        input[type="number"]
+        input[type="date"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        button, input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+            width: 100%;
+            margin-top: 1em;
+        }
+        .calender {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-bottom: 1em;
+        }
+        .calender td{
+            padding: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 0.9em;
+            word-wrap: break-word;
+        }
+        @media screen and (max-width: 600px) {
+            .calender td {
+                font-size: 0.75em;
+                padding: 3px;
+            }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 1em;
+            background-color: #eee;
+            margin: 5px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: steelblue;
+        }
+    </style>
+    <title>{{ project.title }} の進捗</title>
+</head>
+<body>
+    <h1>{{ project.title }} の進捗</h1>
+    <p>現在の進捗率： {{ project.progress_rate }} ％</p>
+    <style>
+        .progress-bar-container {
+            width: 100%;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            height: 24px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #4CAf50;
+            text-align: right;
+            padding-right: 10px;
+            color: white;
+            line-height: 24px;
+            transition: width 0.3s ease;
+        }
+    </style>
+    <div class="progress-bar-container">
+        <div class="progress-bar" style="width: {{ project.progress_rate }}%;">
+            {{ project.progress_rate }}%
+        </div>
+    </div>
+
+    <h3>今月の進捗状況</h3>
+    <style>
+        .calender {
+            width: 100%;
+            table-layout: fixed;
+            text-align: center;
+        }
+        .calender td {
+            padding: 5px;
+            border: 1px solid #ccc;
+            font-size: 0.9em;
+        }
+    </style>
+    <table class="calender">
+        <tr>
+            {% for day in calender %}
+            <td style="background-color: {% if day.has_progress %}{{ day.color }}{% else %}#f2f2f2{% endif %} ;">
+                {{ day.date.day }}<br>
+                {% if day.has_progress %}
+                ☑️
+                {% else %}
+                -
+                {% endif %}
+            </td>
+            {% if forloop.counter|divisibleby:"7" %}
+        </tr><tr>
+            {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+
+
+
+
+    <p>締切： {{ project.deadline }} ／ 全 {{ project.total_pages}} ページ</p>
+    <p>締め切りまであと：{{ project.remaining_days }}日</p>
+    <p>残りページ数：{{ project.remaining_pages }}ページ</p>
+    <p>あと {{ project.estimated_total_hours }} 時間くらい必要です。</p>
+
+    {% if project.can_finish_on_time %}
+    <p style="color: green;">このペースなら間に合いそうです！</p>
+    {% elif project.remaining_days == 0 %}
+    <p style="color: red;">締切を超過しています！残り {{ project.remaining_pages }} ページを今日中に終わらせましょう！</p>
+    {% else %}
+    <p style="color: red;">ペースを上げないと間に合わないかも…！</p>
+    {% endif %}
+
+    <h2>今日の目標</h2>
+    <p>今日は {{ project.today_target_pages }} ページ進めると理想的です！</p>
+    <form method="get" action="{% url 'progress_today_confirm' project.pk %}">
+        <button type="submit">今日の分、終わった！</button>
+    </form>
+
+    <p><a href="{% url 'progress_add' project.pk %}">進捗を追加する</a></p>
+
+    <p><a href="{% url 'project_edit' project.pk %}">このプロジェクトを編集する</a></p>
+
+    <p><a href="{% url 'project_delete' project.pk %}" onclick="return confirm('こちらはプロジェクトの削除です。本当に削除しますか？');">このプロジェクトを削除する</a></p>
+
+    <h2>進捗記録</h2>
+    <ul>
+        {% for progress in progresses %}
+            <li>{{ progress.date }}: {{ progress.pages_done }}ページ</li>
+            <a href="{% url 'progress_delete' progress.id %}" onclick="return confirm('本当に削除しますか？');">この進捗記録を削除</a>
+        {% empty %}
+            <li>まだ記録がありません。</li>
+        {% endfor %}
+    </ul>
+
+    <p><a href="{% url 'project_list' %}">一覧に戻る</a></p>
+</body>
+</html>

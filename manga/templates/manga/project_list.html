@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 10px;
+            margin: 0;
+        }
+        h1,h2,h3 {
+            font-size: 1.2em;
+        }
+        input[type="text"],
+        input[type="number"]
+        input[type="date"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        button, input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+            width: 100%;
+            margin-top: 1em;
+        }
+        .calender {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-bottom: 1em;
+        }
+        .calender td{
+            padding: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 0.9em;
+            word-wrap: break-word;
+        }
+        @media screen and (max-width: 600px) {
+            .calender td {
+                font-size: 0.75em;
+                padding: 3px;
+            }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 1em;
+            background-color: #eee;
+            margin: 5px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: steelblue;
+        }
+    </style>
+    <title>原稿進捗管理</title>
+</head>
+<body>
+    <h1>原稿プロジェクト一覧</h1>
+    <ul>
+        {% for project in projects %}
+        <li>
+            <strong><a href="{% url 'project_detail' project.id %}">{{ project.title }}</a></strong><br>
+            締切: {{ project.deadline }} ／ 総ページ数: {{ project.total_pages }}ページ<br>
+            進捗率: {{ project.progress_rate }}%
+
+            <div style="width: 50%; background-color: #eee; border: 1px solid #ccc; height: 16px; border-radius: 6px; margin: 5px 0;">
+                <div style="height: 100%; width: {{ project.progress_rate }}%; background-color: #4CAF50"></div>
+            </div>
+        </li>
+        {% empty %}
+        <li>まだ原稿が登録されていません。</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

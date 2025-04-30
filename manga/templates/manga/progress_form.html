@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 10px;
+            margin: 0;
+        }
+        h1,h2,h3 {
+            font-size: 1.2em;
+        }
+        input[type="text"],
+        input[type="number"]
+        input[type="date"] {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        button, input[type="submit"] {
+            padding: 0.5em 1em;
+            font-size: 1em;
+            width: 100%;
+            margin-top: 1em;
+        }
+        .calender {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin-bottom: 1em;
+        }
+        .calender td{
+            padding: 5px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 0.9em;
+            word-wrap: break-word;
+        }
+        @media screen and (max-width: 600px) {
+            .calender td {
+                font-size: 0.75em;
+                padding: 3px;
+            }
+        }
+        .progress-bar {
+            width: 100%;
+            height: 1em;
+            background-color: #eee;
+            margin: 5px 0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background-color: steelblue;
+        }
+    </style>
+    <title>{{ project.title }} - 進捗追加</title>
+</head>
+<body>
+    <h1>{{ project.title }} の進捗を記録する</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">登録する</button>
+    </form>
+    <p><a href="{% url 'project_detail' project.pk %}">詳細ページに戻る</a></p>
+</body>
+</html>
